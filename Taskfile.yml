@@ -1,0 +1,13 @@
+version: '3'
+
+includes:
+  image:dev:
+    taskfile: ./common/taskfiles/podman.tasks.yml
+    vars:
+      IMAGE_NAME: dev
+      CONTAINERFILE: ./images/dev/Containerfile
+      EXPECTED_CONFIG: ./images/dev/versions.yml
+
+# TODO: How to do the full build, test, release?
+#   Release task to simply run build and test?
+#   At some point we need to push the image to a registry, at least in CI

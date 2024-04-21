@@ -1,0 +1,88 @@
+FROM ubuntu:mantic
+
+# Replace dash with bash
+RUN ln -sf /usr/bin/bash /usr/bin/sh
+
+RUN \
+  # TODO: Requires podman 4.x
+  #--mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+  #--mount=target=/var/cache/apt,type=cache,sharing=locked \
+  set -xe; \
+  rm -f /etc/apt/apt.conf.d/docker-clean; \
+  apt-get update; \
+  apt-get upgrade --yes; \
+  apt-get clean;
+
+RUN set -xe; \
+  #DEBIAN_FRONTEND=noninteractive \
+  apt-get install --yes --no-install-recommends \
+    bat \
+    btop \
+    ca-certificates \
+    containers-storage \
+    curl \
+    fuse-overlayfs \
+    git \
+    git-lfs \
+    gitk \
+    iproute2 \
+    jq \
+    pipx \
+    podman \
+    python3 \
+    python3-pip \
+    slirp4netns \
+    snap \
+    sudo \
+    systemd \
+    tmux \
+    uidmap \
+    unzip \
+    vim \
+    wget \
+    yq \
+    zip \
+    zsh \
+    ; \
+  ln -sf /usr/bin/batcat /usr/bin/bat; \
+  ln -sf /usr/bin/python3 /usr/bin/python; \
+  # Prepare for systemd support in WSL
+  # See: https://github.com/microsoft/WSL/issues/9602#issuecomment-1421897547
+  ln -s /usr/lib/systemd/systemd /sbin/init; \
+  apt-get clean;
+
+ENV PIPX_HOME=/opt/pipx
+ENV PIPX_BIN_DIR=/usr/local/bin
+COPY images/dev/resources/tmp/ /tmp/
+
+RUN set -xe; \
+  pipx install pre-commit; \
+  pipx install tldr; \
+  pipx install poetry; \
+  pipx install tmuxp; \
+  sh -c "$(curl --location https://taskfile.dev/install.sh)"; \
+  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin; \
+  # TODO: Single place for versions, which can be used to test the image later
+  bash /tmp/scripts/install-kubectl.sh v1.29.4; \
+  curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash; \
+  curl -sL https://talos.dev/install | sh; \
+  userdel --remove ubuntu; \
+  bash /tmp/scripts/setup-user.sh dev; \
+  bash /tmp/scripts/configure-podman.sh dev; \
+  rm -rf /tmp/scripts;
+
+COPY images/dev/resources/etc/wsl.conf /etc/
+RUN set -xe; \
+  sed -i 's/{{ USER }}/dev/' /etc/wsl.conf;
+
+USER dev
+WORKDIR /home/dev
+RUN set -xe; \
+  curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash; \
+  # Install dotfiles
+  sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply MLNW; \
+  # Remove any sockets, e.g., created by tmux during plugin installation
+  find /tmp -type s -delete; \
+  curl https://mise.run | sh;
+
+CMD [ "zsh" ]

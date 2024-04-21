@@ -1,0 +1,128 @@
+version: "3"
+
+vars:
+  IMAGE_TAG: '{{.IMAGE_TAG | default "latest"}}'
+
+tasks:
+  build:
+    desc: Build the '{{.IMAGE_NAME}}:{{.IMAGE_TAG}}' image
+    summary: |
+      Build the '{{.IMAGE_NAME}}:{{.IMAGE_TAG}}' image
+
+      This task builds the container image defined in {{.CONTAINERFILE}}.
+
+      Variables:
+        - IMAGE_TAG: Provide the image tag, defaults to `latest`.
+        - PODMAN_OPTS: Optionally provide options for the `podman build` command.
+    requires:
+      vars:
+        - IMAGE_NAME
+        - CONTAINERFILE
+    vars:
+      FORMAT: '{{.FORMAT | default "oci"}}'
+      # TODO: Allow overriding IMAGE
+      #IMAGE: "{{default .IMAGE (print .IMAGE_NAME \":\" .IMAGE_TAG)}}"
+      #IMAGE: '{{.IMAGE | default ({{.IMAGE_NAME:.IMAGE_TAG}})}}'
+    cmds:
+      - podman build .
+        --file {{.CONTAINERFILE}}
+        --tag {{.IMAGE_NAME}}:{{.IMAGE_TAG}}
+        --format {{.FORMAT}}
+        {{.PODMAN_OPTS}}
+      - task: test
+    # TODO: Allow work avoidance but with dynamically provided files part of the
+    #   Containerfile, otherwise it won't work when there are files copied into
+    #   the container.
+
+  test:
+    desc: Test the '{{.IMAGE_NAME}}:{{.IMAGE_TAG}}' image
+    summary: |
+      Test the '{{.IMAGE_NAME}}:{{.IMAGE_TAG}}' image
+
+      This task tests that software defined in {{.EXPECTED_CONFIG}} is executable
+      and installed in the right version.
+
+      Variables:
+        - IMAGE_TAG: Provide the image tag, defaults to `latest`.
+    requires:
+      vars:
+        - IMAGE_NAME
+        - EXPECTED_CONFIG
+    cmds:
+      - bash common/scripts/check-versions.sh
+        {{.EXPECTED_CONFIG}}
+        {{.IMAGE_NAME}}:{{.IMAGE_TAG}}
+    preconditions:
+      - sh: which yq
+        msg: The `yq` CLI is required to run this task.
+      - sh: which jq
+        msg: The `jq` CLI is required to run this task.
+
+  release:
+    vars:
+      # TODO: dynamic but overridable, based on 'branch-timestamp-hash'?
+      #   maybe through a script that checks for the environment variable?
+      #   what if we want to release multiple tags of a single image?
+      IMAGE_TAG: '{{.IMAGE_TAG | default "latest"}}'
+    cmds:
+      - task: build
+      - task: test
+      - echo "TODO, tagging? Pushing?"
+
+  debug:
+    desc: Debug the '{{.IMAGE_NAME}}:{{.IMAGE_TAG}}' image
+    summary: |
+      Debug the '{{.IMAGE_NAME}}:{{.IMAGE_TAG}}' image
+
+      This task runs the container image and mounts the repository root into the
+      the container. The working dir is set to this mounted folder.
+
+      Variables:
+        - PODMAN_OPTS: Optionally provide options for the `podman run` command.
+    requires:
+      vars:
+        - IMAGE_NAME
+    cmds:
+      # TODO: Allow debugging an intermediary image via IMAGE_ID
+      - podman run
+        --rm -it
+        --volume .:/repo
+        --workdir /repo
+        {{.PODMAN_OPTS}}
+        {{.IMAGE_NAME}}:{{.IMAGE_TAG}}
+    interactive: true
+
+  wsl:
+    desc: Build a WSL distro from '{{.IMAGE_NAME}}:{{.IMAGE_TAG}}' image
+    requires:
+      vars:
+        - IMAGE_NAME
+    vars:
+      ROOTFS_TAR: "build/{{.IMAGE_NAME}}-{{.IMAGE_TAG}}.tar"
+    cmds:
+      # TODO: Write script
+      # TODO: Include import script and README
+      - |
+        set -o pipefail
+        NAME={{.IMAGE_NAME}}-export-$(date +%s)
+        podman run --name $NAME --tty {{.IMAGE_NAME}}:{{.IMAGE_TAG}} ls / > /dev/null
+        ID=$(podman ps --all | grep -i $NAME | awk '{ print $1 }')
+        mkdir -p build
+        podman export --output {{.ROOTFS_TAR}} $ID
+        podman rm -f $ID
+    status:
+      - test -f {{.ROOTFS_TAR}}
+      # Task is up-to-date if container image is older than build artifact
+      - |
+        image_creation_time_utc=$(podman inspect {{.IMAGE_NAME}}:{{.IMAGE_TAG}} --format '{{`{{.Created}}`}}' \
+          | cut -d. -f1 \
+          | xargs -I{} date -u -d {} +%s)
+        build_creation_time_utc=$(TZ=UTC stat -c %Y {{.ROOTFS_TAR}})
+        test "$image_creation_time_utc" -lt "$build_creation_time_utc"
+    preconditions:
+      - sh: which podman
+        msg: The `podman` CLI is required to run this task.
+      - sh: which awk
+        msg: The `awk` CLI is required to run this task.
+      - sh: podman image exists {{.IMAGE_NAME}}:{{.IMAGE_TAG}}
+        msg: The `{{.IMAGE_NAME}}:{{.IMAGE_TAG}}` image does not exist. Have you built it already?

@@ -1,0 +1,14 @@
+{
+  "editor.rulers": [
+    80,
+    100
+  ],
+  "editor.tabSize": 2,
+  "editor.trimAutoWhitespace": true,
+  "yaml.schemas": {
+    "https://taskfile.dev/schema.json": [
+      "common/tasks/Taskfile.yml",
+      "common/taskfiles/*.tasks.yml",
+    ]
+  }
+}

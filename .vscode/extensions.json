@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "ms-azuretools.vscode-docker",
+    "redhat.vscode-yaml",
+    "task.vscode-task",
+    "timonwong.shellcheck",
+  ]
+}

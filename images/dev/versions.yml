@@ -1,0 +1,39 @@
+software:
+  - name: task
+    expected_output: v3
+  - name: chezmoi
+  - name: podman
+    expected_output: podman version 4.
+  - name: mise
+    check_command: /bin/zsh --login -c '[ -f ~/.zshrc ] && . ~/.zshrc; mise --version'
+  - name: zoxide
+    check_command: /bin/zsh --login -c '[ -f ~/.zshrc ] && . ~/.zshrc; zoxide --version'
+
+  - name: curl
+  - name: git
+  - name: gitk
+    check_command: which gitk
+  - name: jq
+  - name: tmux
+    check_command: tmux -V
+  - name: tmuxp
+  - name: vim
+  - name: wget
+  - name: yq
+  - name: zsh
+
+  - name: python
+  - name: python3
+  - name: pip
+  - name: pip3
+  - name: pipx
+  - name: pre-commit
+  - name: tldr
+  - name: poetry
+
+  - name: kubectl
+    check_command: kubectl version --client
+  - name: helm
+    check_command: helm version --client
+  - name: talosctl
+    check_command: talosctl version --client

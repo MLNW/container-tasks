@@ -65,6 +65,7 @@ RUN set -xe; \
   pipx install tldr; \
   pipx install poetry; \
   pipx install tmuxp; \
+  bash /tmp/scripts/install-scc.sh; \
   sh -c "$(curl --location https://taskfile.dev/install.sh)"; \
   sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin; \
   # TODO: Single place for versions, which can be used to test the image later
@@ -74,7 +75,7 @@ RUN set -xe; \
   userdel --remove ubuntu; \
   bash /tmp/scripts/setup-user.sh dev; \
   bash /tmp/scripts/configure-podman.sh dev; \
-  rm -rf /tmp/scripts;
+  rm -rf /tmp/*;
 
 COPY images/dev/resources/etc/wsl.conf /etc/
 RUN set -xe; \
@@ -88,6 +89,7 @@ RUN set -xe; \
   sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply MLNW; \
   # Remove any sockets, e.g., created by tmux during plugin installation
   find /tmp -type s -delete; \
-  curl https://mise.run | sh;
+  curl https://mise.run | sh; \
+  rm -rf /tmp/*;
 
 CMD [ "zsh" ]

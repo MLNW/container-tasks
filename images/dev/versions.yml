@@ -16,6 +16,7 @@ software:
   - name: gitk
     check_command: which gitk
   - name: jq
+  - name: scc
   - name: tmux
     check_command: tmux -V
   - name: tmuxp

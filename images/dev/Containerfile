@@ -88,6 +88,9 @@ RUN set -xe; \
 
 USER dev
 WORKDIR /home/dev
+
+COPY --chown=dev:dev \
+  images/dev/resources/tmp/ /tmp/
 RUN set -xe; \
   curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash; \
   # Install dotfiles
@@ -95,6 +98,7 @@ RUN set -xe; \
   # Remove any sockets, e.g., created by tmux during plugin installation
   find /tmp -type s -delete; \
   curl https://mise.run | sh; \
+  bash /tmp/scripts/configure-gitk.sh; \
   rm -rf /tmp/*;
 
 CMD [ "zsh" ]

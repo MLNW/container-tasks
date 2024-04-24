@@ -10,6 +10,8 @@ software:
     check_command: /bin/zsh --login -c '[ -f ~/.zshrc ] && . ~/.zshrc; zoxide --version'
 
   - name: curl
+  - name: duf
+  - name: dust
   - name: git
   - name: gitk
     check_command: which gitk

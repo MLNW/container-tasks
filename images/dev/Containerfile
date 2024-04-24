@@ -21,12 +21,14 @@ RUN set -xe; \
     ca-certificates \
     containers-storage \
     curl \
+    duf \
     fuse-overlayfs \
     git \
     git-lfs \
     gitk \
     iproute2 \
     jq \
+    lsb-release \
     pipx \
     podman \
     python3 \
@@ -49,6 +51,9 @@ RUN set -xe; \
   # Prepare for systemd support in WSL
   # See: https://github.com/microsoft/WSL/issues/9602#issuecomment-1421897547
   ln -s /usr/lib/systemd/systemd /sbin/init; \
+  curl -sL https://raw.githubusercontent.com/wimpysworld/deb-get/main/deb-get \
+    | bash -s install deb-get; \
+  deb-get install du-dust; \
   apt-get clean;
 
 ENV PIPX_HOME=/opt/pipx

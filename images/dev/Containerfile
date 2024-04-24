@@ -36,6 +36,7 @@ RUN set -xe; \
     python3-pip \
     slirp4netns \
     snap \
+    ssh \
     sudo \
     systemd \
     tmux \

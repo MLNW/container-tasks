@@ -4,7 +4,7 @@ includes:
   image:dev:
     taskfile: ./common/taskfiles/podman.tasks.yml
     vars:
-      IMAGE_NAME: dev
+      IMAGE_NAME: '{{.IMAGE_NAME | default "dev"}}'
       CONTAINERFILE: ./images/dev/Containerfile
       EXPECTED_CONFIG: ./images/dev/versions.yml
 

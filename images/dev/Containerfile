@@ -75,8 +75,8 @@ RUN set -xe; \
   bash /tmp/scripts/install-fonts.sh; \
   sh -c "$(curl --location https://taskfile.dev/install.sh)"; \
   sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin; \
-  # TODO: Single place for versions, which can be used to test the image later
-  bash /tmp/scripts/install-kubectl.sh v1.29.4; \
+  bash /tmp/scripts/install-kubectl.sh v1.30.0; \
+  bash /tmp/scripts/install-clusterctl.sh 1.7.1; \
   curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash; \
   curl -sL https://talos.dev/install | sh; \
   userdel --remove ubuntu; \

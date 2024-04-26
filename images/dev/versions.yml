@@ -36,6 +36,8 @@ software:
 
   - name: kubectl
     check_command: kubectl version --client
+  - name: clusterctl
+    check_command: clusterctl version
   - name: helm
     check_command: helm version --client
   - name: talosctl

@@ -109,18 +109,33 @@ tasks:
       vars:
         - IMAGE_NAME
     vars:
-      ROOTFS_TAR: "build/{{.IMAGE_NAME}}-{{.IMAGE_TAG}}.tar"
+      BUILD_PATH: "build"
+      TMP_PATH: "{{.BUILD_PATH}}/{{.IMAGE_NAME}}-{{.IMAGE_TAG}}/"
+      ROOTFS_TAR: "{{.TMP_PATH}}/{{.IMAGE_NAME}}-{{.IMAGE_TAG}}.tar"
+      ZIP_ARCHIVE: "{{.IMAGE_NAME}}-{{.IMAGE_TAG}}.zip"
+    # TODO: Write script
     cmds:
-      # TODO: Write script
-      # TODO: Include import script and README
+      # Export container filesystem
       - |
         set -o pipefail
         NAME={{.IMAGE_NAME}}-export-$(date +%s)
         podman run --name $NAME --tty {{.COMPUTED_IMAGE}} ls / > /dev/null
         ID=$(podman ps --all | grep -i $NAME | awk '{ print $1 }')
-        mkdir -p build
+        mkdir -p {{.TMP_PATH}}
         podman export --output {{.ROOTFS_TAR}} $ID
         podman rm -f $ID
+
+      # Prepare archive contents
+      - cp common/wsl/*.ps1 {{.TMP_PATH}}/.
+      - sed -i {{.TMP_PATH}}/installer.ps1
+          -e 's/<name>/{{.IMAGE_NAME}}-{{.IMAGE_TAG}}/'
+          -e 's/<tar>/{{.IMAGE_NAME}}-{{.IMAGE_TAG}}.tar/'
+
+      # Create archive
+      - |
+        pushd {{.BUILD_PATH}} || exit 1
+        zip -r {{.ZIP_ARCHIVE}} {{.IMAGE_NAME}}-{{.IMAGE_TAG}}
+        popd || exit 1
     status:
       - test -f {{.ROOTFS_TAR}}
       # Task is up-to-date if container image is older than build artifact
@@ -135,5 +150,7 @@ tasks:
         msg: The `podman` CLI is required to run this task.
       - sh: which awk
         msg: The `awk` CLI is required to run this task.
+      - sh: which zip
+        msg: The `zip` CLI is required to run this task.
       - sh: podman image exists {{.COMPUTED_IMAGE}}
         msg: The `{{.COMPUTED_IMAGE}}` image does not exist. Have you built it already?

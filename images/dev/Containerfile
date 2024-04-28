@@ -27,8 +27,10 @@ RUN set -xe; \
     git \
     git-lfs \
     gitk \
+    inetutils-ping \
     iproute2 \
     jq \
+    dnsutils \
     locales \
     lsb-release \
     pipx \

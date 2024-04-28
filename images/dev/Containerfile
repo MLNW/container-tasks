@@ -79,6 +79,7 @@ RUN set -xe; \
   sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin; \
   bash /tmp/scripts/install-kubectl.sh v1.30.0; \
   bash /tmp/scripts/install-clusterctl.sh 1.7.1; \
+  bash /tmp/scripts/install-cilium.sh; \
   curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash; \
   curl -sL https://talos.dev/install | sh; \
   userdel --remove ubuntu; \

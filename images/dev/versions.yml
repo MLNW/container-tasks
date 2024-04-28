@@ -42,3 +42,5 @@ software:
     check_command: helm version --client
   - name: talosctl
     check_command: talosctl version --client
+  - name: cilium
+    check_command: cilium version --client

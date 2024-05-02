@@ -78,6 +78,7 @@ RUN set -xe; \
   bash /tmp/scripts/install-clusterctl.sh 1.7.1; \
   bash /tmp/scripts/install-cilium.sh; \
   curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash; \
+  curl -s https://fluxcd.io/install.sh | bash; \
   curl -sL https://talos.dev/install | sh; \
   userdel --remove ubuntu; \
   bash /tmp/scripts/setup-user.sh dev; \

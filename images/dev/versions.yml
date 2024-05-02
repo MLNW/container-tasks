@@ -41,6 +41,7 @@ software:
     check_command: clusterctl version
   - name: helm
     check_command: helm version --client
+  - name: flux
   - name: talosctl
     check_command: talosctl version --client
   - name: cilium

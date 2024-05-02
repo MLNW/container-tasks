@@ -47,7 +47,6 @@ RUN set -xe; \
     unzip \
     vim \
     wget \
-    yq \
     zip \
     zsh \
     ; \
@@ -74,6 +73,7 @@ RUN set -xe; \
   pipx install poetry; \
   pipx install tmuxp; \
   bash /tmp/scripts/install-scc.sh; \
+  bash /tmp/scripts/install-yq.sh; \
   bash /tmp/scripts/install-fonts.sh; \
   sh -c "$(curl --location https://taskfile.dev/install.sh)"; \
   sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin; \

@@ -23,6 +23,7 @@ software:
   - name: vim
   - name: wget
   - name: yq
+    expected_output: yq (https://github.com/mikefarah/yq/) version v4
   - name: zsh
 
   - name: python

@@ -4,6 +4,8 @@ config_file=$1
 image=$2
 errors=""
 
+set -e
+
 while read -r software; do
   name=$(echo $software | jq -r '.name')
   check_command=$(echo $software | jq -r '.check_command // empty')
@@ -26,7 +28,7 @@ while read -r software; do
   else
     errors+="$name command execution failed. Found: $installed_version\n"
   fi
-done < <(yq e '.software' $config_file -o=json | jq -c '.[]')
+done < <(yq '.software' $config_file -o=json | jq -c '.[]')
 
 if [[ -n "$errors" ]]; then
   echo -e "\nThere were failures:"

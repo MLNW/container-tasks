@@ -20,11 +20,10 @@ cp \
   /usr/share/containers/storage.conf \
   /etc/containers/
 
+# See: https://wiki.archlinux.org/title/Podman#Configuration
+usermod --add-subuids 100000-165535 --add-subgids 100000-165535 $user_name
+
 # See: https://www.redhat.com/sysadmin/podman-inside-container
-
-echo $user_name:10000:10000 > /etc/subuid
-echo $user_name:10000:10000 > /etc/subgid
-
 sed -i /etc/containers/storage.conf \
   -e 's|^#mount_program|mount_program|g' \
   -e '/additionalimage.*/a "/var/lib/shared",' \

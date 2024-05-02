@@ -1,4 +1,4 @@
-FROM ubuntu:mantic
+FROM ubuntu:24.04
 
 # Replace dash with bash
 RUN ln -sf /usr/bin/bash /usr/bin/sh
@@ -23,7 +23,6 @@ RUN set -xe; \
     curl \
     duf \
     fontconfig \
-    fuse-overlayfs \
     git \
     git-lfs \
     gitk \
@@ -56,9 +55,6 @@ RUN set -xe; \
   # Prepare for systemd support in WSL
   # See: https://github.com/microsoft/WSL/issues/9602#issuecomment-1421897547
   ln -s /usr/lib/systemd/systemd /sbin/init; \
-  curl -sL https://raw.githubusercontent.com/wimpysworld/deb-get/main/deb-get \
-    | bash -s install deb-get; \
-  deb-get install du-dust; \
   apt-get clean;
 
 ENV LANG=en_US.UTF-8
@@ -74,6 +70,7 @@ RUN set -xe; \
   pipx install tmuxp; \
   bash /tmp/scripts/install-scc.sh; \
   bash /tmp/scripts/install-yq.sh; \
+  bash /tmp/scripts/install-dust.sh; \
   bash /tmp/scripts/install-fonts.sh; \
   sh -c "$(curl --location https://taskfile.dev/install.sh)"; \
   sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin; \

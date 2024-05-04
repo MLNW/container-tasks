@@ -5,7 +5,10 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
-archive="dust.tar.gz"
+name="dust"
+archive="$name.tar.gz"
+repo="bootandy/dust"
+artifact="x86_64-unknown-linux-gnu.tar.gz"
 
 set -xe
 
@@ -14,16 +17,14 @@ trap 'rm -rf "$temp_dir"' EXIT
 
 pushd "$temp_dir" || exit 1
 
-url=$(curl -s https://api.github.com/repos/bootandy/dust/releases/latest \
+url=$(curl -s https://api.github.com/repos/$repo/releases/latest \
   | jq -r '.assets[] | .browser_download_url' \
-  | grep "x86_64-unknown-linux-gnu.tar.gz")
+  | grep -e "$artifact")
 curl -L -o $archive $url
 
 tar xzf $archive --strip-components=1
 rm $archive
 
-ls -lah
-
-install -o root -g root -m 0755 dust /usr/local/bin/dust
+install -o root -g root -m 0755 $name /usr/local/bin/$name
 
 popd || exit 1

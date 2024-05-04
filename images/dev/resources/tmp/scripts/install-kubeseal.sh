@@ -5,10 +5,10 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
-name="scc"
+name="kubeseal"
 archive="$name.tar.gz"
-repo="boyter/scc"
-artifact="Linux_x86_64"
+repo="bitnami-labs/sealed-secrets"
+artifact="-linux-amd64.tar.gz"
 
 set -xe
 

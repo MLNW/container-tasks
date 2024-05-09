@@ -98,7 +98,7 @@ COPY --chown=dev:dev \
 RUN set -xe; \
   curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash; \
   # Install dotfiles
-  sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply MLNW; \
+  chezmoi init --apply MLNW; \
   # Remove any sockets, e.g., created by tmux during plugin installation
   find /tmp -type s -delete; \
   curl https://mise.run | sh; \

@@ -35,6 +35,8 @@ software:
   - name: tldr
   - name: poetry
 
+  - name: d2
+
   - name: kubectl
     check_command: kubectl version --client
   - name: clusterctl

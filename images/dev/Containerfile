@@ -18,6 +18,7 @@ RUN \
     ca-certificates \
     containers-storage \
     curl \
+    dnsutils \
     duf \
     fontconfig \
     git \
@@ -26,10 +27,10 @@ RUN \
     inetutils-ping \
     iproute2 \
     jq \
-    dnsutils \
     less \
     locales \
     lsb-release \
+    make \
     pipx \
     podman \
     python3 \
@@ -70,6 +71,7 @@ RUN set -xe; \
   bash /tmp/scripts/install-yq.sh; \
   bash /tmp/scripts/install-dust.sh; \
   bash /tmp/scripts/install-fonts.sh; \
+  curl -fsSL https://d2lang.com/install.sh | sh -s --; \
   sh -c "$(curl --location https://taskfile.dev/install.sh)"; \
   sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin; \
   bash /tmp/scripts/install-kubectl.sh v1.30.0; \

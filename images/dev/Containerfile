@@ -11,10 +11,7 @@ RUN \
   rm -f /etc/apt/apt.conf.d/docker-clean; \
   apt-get update; \
   apt-get upgrade --yes; \
-  apt-get clean;
-
-RUN set -xe; \
-  #DEBIAN_FRONTEND=noninteractive \
+  apt-get clean; \
   apt-get install --yes --no-install-recommends \
     bat \
     btop \
@@ -30,6 +27,7 @@ RUN set -xe; \
     iproute2 \
     jq \
     dnsutils \
+    less \
     locales \
     lsb-release \
     pipx \
@@ -81,6 +79,7 @@ RUN set -xe; \
   curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash; \
   curl -s https://fluxcd.io/install.sh | bash; \
   curl -sL https://talos.dev/install | sh; \
+  curl -fsSL https://bun.sh/install | bash; \
   userdel --remove ubuntu; \
   bash /tmp/scripts/setup-user.sh dev; \
   bash /tmp/scripts/configure-podman.sh dev; \
@@ -102,6 +101,7 @@ RUN set -xe; \
   # Remove any sockets, e.g., created by tmux during plugin installation
   find /tmp -type s -delete; \
   curl https://mise.run | sh; \
+  .local/bin/mise use -g node@20; \
   bash /tmp/scripts/configure-gitk.sh; \
   rm -rf /tmp/*;
 

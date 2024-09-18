@@ -70,6 +70,7 @@ RUN set -xe; \
   bash /tmp/scripts/install-scc.sh; \
   bash /tmp/scripts/install-yq.sh; \
   bash /tmp/scripts/install-dust.sh; \
+  bash /tmp/scripts/install-vale.sh; \
   bash /tmp/scripts/install-fonts.sh; \
   curl -fsSL https://d2lang.com/install.sh | sh -s --; \
   sh -c "$(curl --location https://taskfile.dev/install.sh)"; \

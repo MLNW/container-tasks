@@ -36,7 +36,7 @@ RUN \
     python3 \
     python3-pip \
     slirp4netns \
-    snap \
+    snapd \
     ssh \
     sudo \
     systemd \
@@ -51,9 +51,6 @@ RUN \
   locale-gen en_US.UTF-8; \
   ln -sf /usr/bin/batcat /usr/bin/bat; \
   ln -sf /usr/bin/python3 /usr/bin/python; \
-  # Prepare for systemd support in WSL
-  # See: https://github.com/microsoft/WSL/issues/9602#issuecomment-1421897547
-  ln -s /usr/lib/systemd/systemd /sbin/init; \
   apt-get clean;
 
 ENV LANG=en_US.UTF-8

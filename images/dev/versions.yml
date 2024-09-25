@@ -27,6 +27,8 @@ software:
     expected_output: yq (https://github.com/mikefarah/yq/) version v4
   - name: zsh
 
+  - name: java
+
   - name: python
   - name: python3
   - name: pip
@@ -37,6 +39,12 @@ software:
   - name: poetry
 
   - name: d2
+  - name: dot
+    check_command: dot -version
+  - name: plantuml
+    check_command: plantuml -version
+  - name: structurizr
+    check_command: structurizr version
 
   - name: kubectl
     check_command: kubectl version --client

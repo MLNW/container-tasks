@@ -15,8 +15,10 @@ while read -r software; do
     check_command="$name --version"
   fi
 
+  set +e
   installed_version=$(podman run --rm $image bash -c "$check_command" 2>&1)
   success=$?
+  set -e
 
   if [[ $success == 0 ]]; then
     if [[ -n "$expected_output" && $installed_version != *"$expected_output"* ]]; then

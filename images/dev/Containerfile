@@ -100,6 +100,7 @@ COPY --chown=dev:dev \
   images/dev/resources/tmp/ /tmp/
 RUN set -xe; \
   curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash; \
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y; \
   # Install dotfiles
   chezmoi init --apply MLNW; \
   # Remove any sockets, e.g., created by tmux during plugin installation

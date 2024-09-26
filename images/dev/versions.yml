@@ -29,6 +29,11 @@ software:
 
   - name: java
 
+  - name: rustc
+    check_command: /bin/zsh --login -c '[ -f ~/.zshrc ] && . ~/.zshrc; rustc --version'
+  - name: cargo
+    check_command: /bin/zsh --login -c '[ -f ~/.zshrc ] && . ~/.zshrc; cargo --version'
+
   - name: python
   - name: python3
   - name: pip

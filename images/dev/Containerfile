@@ -69,6 +69,7 @@ RUN set -xe; \
   pipx install tmuxp; \
   bash /tmp/scripts/install-scc.sh; \
   bash /tmp/scripts/install-yq.sh; \
+  bash /tmp/scripts/install-dive.sh; \
   bash /tmp/scripts/install-dust.sh; \
   bash /tmp/scripts/install-vale.sh; \
   bash /tmp/scripts/install-fonts.sh; \

@@ -38,3 +38,13 @@ touch /var/lib/shared/overlay-images/images.lock
 touch /var/lib/shared/overlay-layers/layers.lock
 touch /var/lib/shared/vfs-images/images.lock
 touch /var/lib/shared/vfs-layers/layers.lock
+
+# Container registries running locally are allowed to be used insecurely
+# This is useful, e.g., when running a microk8s cluster with the registry
+# enabled.
+cat <<EOF >> /etc/containers/registries.conf
+
+[[registry]]
+location = "localhost"
+insecure = true
+EOF

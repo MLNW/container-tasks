@@ -67,6 +67,7 @@ RUN set -xe; \
   pipx install tldr; \
   pipx install poetry; \
   pipx install tmuxp; \
+  bash /tmp/scripts/install-mold.sh; \
   bash /tmp/scripts/install-scc.sh; \
   bash /tmp/scripts/install-yq.sh; \
   bash /tmp/scripts/install-dive.sh; \

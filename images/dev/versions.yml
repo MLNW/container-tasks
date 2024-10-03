@@ -34,6 +34,7 @@ software:
     check_command: /bin/zsh --login -c '[ -f ~/.zshrc ] && . ~/.zshrc; rustc --version'
   - name: cargo
     check_command: /bin/zsh --login -c '[ -f ~/.zshrc ] && . ~/.zshrc; cargo --version'
+  - name: clang
   - name: mold
 
   - name: python

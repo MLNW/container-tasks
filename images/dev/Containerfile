@@ -17,6 +17,7 @@ RUN \
     btop \
     build-essential \
     ca-certificates \
+    clang \
     containers-storage \
     curl \
     dnsutils \

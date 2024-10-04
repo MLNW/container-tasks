@@ -25,6 +25,6 @@ curl -L -o $archive $url
 tar xzf $archive --strip-components=1
 rm $archive
 
-install -o root -g root -m 0755 bin/$name /usr/local/bin/$name
+install -o root -g root -m 0755 bin/$name /usr/bin/$name
 
 popd || exit 1

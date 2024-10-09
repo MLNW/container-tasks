@@ -93,7 +93,7 @@ RUN set -xe; \
   bash /tmp/scripts/configure-podman.sh dev; \
   rm -rf /tmp/*;
 
-COPY images/dev/resources/etc/wsl.conf /etc/
+COPY images/dev/resources/etc/ /etc/
 RUN set -xe; \
   sed -i 's/{{ USER }}/dev/' /etc/wsl.conf;
 

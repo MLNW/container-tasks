@@ -1,14 +1,10 @@
 version: "3"
 
-vars:
-  IMAGE_TAG: '{{.IMAGE_TAG | default "latest"}}'
-  COMPUTED_IMAGE: '{{.IMAGE | default (printf "%s:%s" .IMAGE_NAME .IMAGE_TAG)}}'
-
 tasks:
   build:
-    desc: Build the '{{.COMPUTED_IMAGE}}' image
+    desc: Build the '{{.IMAGE_NAME}}' image
     summary: |
-      Build the '{{.COMPUTED_IMAGE}}' image
+      Build the '{{.IMAGE_NAME}}' image
 
       This task builds the container image defined in {{.CONTAINERFILE}}.
 
@@ -16,13 +12,15 @@ tasks:
         - IMAGE_NAME: Provide the image name, required.
         - CONTAINERFILE: Provide the path to the Containerfile, required.
         - IMAGE_TAG: Provide the image tag, defaults to `latest`.
-        - IMAGE: Provide the full image tag, defaults to a `IMAGE_NAME:IMAGE_TAG`.
+        - IMAGE: Provide the full image tag, defaults to `IMAGE_NAME:IMAGE_TAG`.
         - PODMAN_OPTS: Optionally provide options for the `podman build` command.
     requires:
       vars:
         - IMAGE_NAME
         - CONTAINERFILE
     vars:
+      IMAGE_TAG: '{{.IMAGE_TAG | default "latest"}}'
+      COMPUTED_IMAGE: '{{.IMAGE | default (printf "%s:%s" .IMAGE_NAME .IMAGE_TAG)}}'
       FORMAT: '{{.FORMAT | default "oci"}}'
     cmds:
       - podman build .
@@ -31,14 +29,15 @@ tasks:
         --format {{.FORMAT}}
         {{.PODMAN_OPTS}}
       - task: test
+        vars: { IMAGE: '{{.COMPUTED_IMAGE}}' }
     # TODO: Allow work avoidance but with dynamically provided files part of the
     #   Containerfile, otherwise it won't work when there are files copied into
     #   the container.
 
   test:
-    desc: Test the '{{.COMPUTED_IMAGE}}' image
+    desc: Test the '{{.IMAGE_NAME}}' image
     summary: |
-      Test the '{{.COMPUTED_IMAGE}}' image
+      Test the '{{.IMAGE_NAME}}' image
 
       This task tests that software defined in {{.EXPECTED_CONFIG}} is executable
       and installed in the right version.
@@ -46,36 +45,65 @@ tasks:
       Variables:
         - IMAGE_NAME: Provide the image name, required.
         - IMAGE_TAG: Provide the image tag, defaults to `latest`.
-        - IMAGE: Provide the full image tag, defaults to a `IMAGE_NAME:IMAGE_TAG`.
+        - IMAGE: Provide the full image tag, defaults to `IMAGE_NAME:IMAGE_TAG`.
     requires:
       vars:
         - IMAGE_NAME
         - EXPECTED_CONFIG
+    vars:
+      IMAGE_TAG: '{{.IMAGE_TAG | default "latest"}}'
+      COMPUTED_IMAGE: '{{.IMAGE | default (printf "%s:%s" .IMAGE_NAME .IMAGE_TAG)}}'
     cmds:
       - bash common/scripts/check-versions.sh
         {{.EXPECTED_CONFIG}}
         {{.COMPUTED_IMAGE}}
     preconditions:
+      - sh: which podman
+        msg: The `podman` CLI is required to run this task.
       - sh: which yq
         msg: The `yq` CLI is required to run this task.
       - sh: which jq
         msg: The `jq` CLI is required to run this task.
+      - sh: podman image exists {{.COMPUTED_IMAGE}}
+        msg: The `{{.COMPUTED_IMAGE}}` image does not exist. Have you built it already?
 
   release:
+    desc: Release the '{{.IMAGE_NAME}}' image.
+    summary: |
+      Release the '{{.IMAGE_NAME}}' image
+
+      This task builds, tests, and creates a WSL distro for the image.
+
+      Variables:
+        - IMAGE_NAME: Provide the image name, required.
+        - IMAGE_TAG: Provide the image tag, defaults to `<branch>-<timestamp>-<short commit hash>`.
+        - IMAGE: Provide the full image tag, defaults to `IMAGE_NAME:IMAGE_TAG`.
+        - PODMAN_OPTS: Optionally provide options for the `podman run` command.
+    requires:
+      vars:
+        - IMAGE_NAME
     vars:
-      # TODO: dynamic but overridable, based on 'branch-timestamp-hash'?
-      #   maybe through a script that checks for the environment variable?
-      #   what if we want to release multiple tags of a single image?
-      IMAGE_TAG: '{{.IMAGE_TAG | default "latest"}}'
+      TIMESTAMP:
+        sh: date -u +%Y-%m-%d_%H%M%S
+      GIT_BRANCH:
+        sh: git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z0-9._-]/-/g'
+      GIT_HASH:
+        sh: git describe --dirty --always --abbrev=8
+      IMAGE_TAG: '{{.IMAGE_TAG | default (printf "%s-%s-%s" .GIT_BRANCH .TIMESTAMP .GIT_HASH)}}'
+      COMPUTED_IMAGE: '{{.IMAGE | default (printf "%s:%s" .IMAGE_NAME .IMAGE_TAG)}}'
     cmds:
       - task: build
-      - task: test
-      - echo "TODO, tagging? Pushing?"
+        vars:
+          IMAGE: '{{.COMPUTED_IMAGE}}'
+      - task: wsl
+        vars:
+          IMAGE: '{{.COMPUTED_IMAGE}}'
+          IMAGE_TAG: '{{.IMAGE_TAG}}'
 
   debug:
-    desc: Debug the '{{.COMPUTED_IMAGE}}' image
+    desc: Debug the '{{.IMAGE_NAME}}' image
     summary: |
-      Debug the '{{.COMPUTED_IMAGE}}' image
+      Debug the '{{.IMAGE_NAME}}' image
 
       This task runs the container image and mounts the repository root into the
       the container. The working dir is set to this mounted folder.
@@ -83,11 +111,14 @@ tasks:
       Variables:
         - IMAGE_NAME: Provide the image name, required.
         - IMAGE_TAG: Provide the image tag, defaults to `latest`.
-        - IMAGE: Provide the full image tag, defaults to a `IMAGE_NAME:IMAGE_TAG`.
+        - IMAGE: Provide the full image tag, defaults to `IMAGE_NAME:IMAGE_TAG`.
         - PODMAN_OPTS: Optionally provide options for the `podman run` command.
     requires:
       vars:
         - IMAGE_NAME
+    vars:
+      IMAGE_TAG: '{{.IMAGE_TAG | default "latest"}}'
+      COMPUTED_IMAGE: '{{.IMAGE | default (printf "%s:%s" .IMAGE_NAME .IMAGE_TAG)}}'
     cmds:
       - podman run
         --rm -it
@@ -96,24 +127,30 @@ tasks:
         {{.PODMAN_OPTS}}
         {{.COMPUTED_IMAGE}}
     interactive: true
+    preconditions:
+      - sh: which podman
+        msg: The `podman` CLI is required to run this task.
+      - sh: podman image exists {{.COMPUTED_IMAGE}}
+        msg: The `{{.COMPUTED_IMAGE}}` image does not exist. Have you built it already?
 
   wsl:
-    desc: Build a WSL distro from '{{.COMPUTED_IMAGE}}' image
+    desc: Build a WSL distro from '{{.IMAGE_NAME}}' image
     summary: |
-      Build a WSL distro from '{{.COMPUTED_IMAGE}}' image
+      Build a WSL distro from '{{.IMAGE_NAME}}' image
 
-      This task builds a WSL distro based on the '{{.COMPUTED_IMAGE}}' image.
+      This task builds a WSL distro based on the '{{.IMAGE_NAME}}' image.
       The resulting tar archive can be imported on a Windows system with WSL
       installed.
     requires:
       vars:
         - IMAGE_NAME
     vars:
+      IMAGE_TAG: '{{.IMAGE_TAG | default "latest"}}'
+      COMPUTED_IMAGE: '{{.IMAGE | default (printf "%s:%s" .IMAGE_NAME .IMAGE_TAG)}}'
       BUILD_PATH: "build"
       TMP_PATH: "{{.BUILD_PATH}}/{{.IMAGE_NAME}}-{{.IMAGE_TAG}}/"
       ROOTFS_TAR: "{{.TMP_PATH}}/{{.IMAGE_NAME}}-{{.IMAGE_TAG}}.tar"
       ZIP_ARCHIVE: "{{.IMAGE_NAME}}-{{.IMAGE_TAG}}.zip"
-    # TODO: Write script
     cmds:
       # Export container filesystem
       - |
@@ -128,8 +165,8 @@ tasks:
       # Prepare archive contents
       - cp common/wsl/* {{.TMP_PATH}}/.
       - sed -i {{.TMP_PATH}}/installer.ps1
-          -e 's/<name>/{{.IMAGE_NAME}}-{{.IMAGE_TAG}}/'
-          -e 's/<tar>/{{.IMAGE_NAME}}-{{.IMAGE_TAG}}.tar/'
+        -e 's/<name>/{{.IMAGE_NAME}}-{{.IMAGE_TAG}}/'
+        -e 's/<tar>/{{.IMAGE_NAME}}-{{.IMAGE_TAG}}.tar/'
 
       # Create archive
       - |

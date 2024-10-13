@@ -71,6 +71,7 @@ RUN set -xe; \
   bash /tmp/scripts/install-mold.sh; \
   bash /tmp/scripts/install-scc.sh; \
   bash /tmp/scripts/install-yq.sh; \
+  bash /tmp/scripts/install-tilt.sh; \
   bash /tmp/scripts/install-dive.sh; \
   bash /tmp/scripts/install-dust.sh; \
   bash /tmp/scripts/install-vale.sh; \

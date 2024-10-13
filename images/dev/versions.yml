@@ -37,6 +37,9 @@ software:
   - name: clang
   - name: mold
 
+  - name: tilt
+    check_command: tilt version
+
   - name: python
   - name: python3
   - name: pip

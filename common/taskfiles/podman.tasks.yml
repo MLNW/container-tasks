@@ -126,7 +126,7 @@ tasks:
         podman rm -f $ID
 
       # Prepare archive contents
-      - cp common/wsl/*.ps1 {{.TMP_PATH}}/.
+      - cp common/wsl/* {{.TMP_PATH}}/.
       - sed -i {{.TMP_PATH}}/installer.ps1
           -e 's/<name>/{{.IMAGE_NAME}}-{{.IMAGE_TAG}}/'
           -e 's/<tar>/{{.IMAGE_NAME}}-{{.IMAGE_TAG}}.tar/'

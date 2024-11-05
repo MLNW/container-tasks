@@ -49,6 +49,8 @@ software:
   - name: tldr
   - name: poetry
 
+  - name: psql
+
   - name: d2
   - name: dot
     check_command: dot -version

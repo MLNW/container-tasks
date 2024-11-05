@@ -33,10 +33,12 @@ RUN \
     less \
     locales \
     lsb-release \
+    lsof \
     make \
     openjdk-21-jdk \
     pipx \
     podman \
+    postgresql-client \
     python3 \
     python3-pip \
     slirp4netns \

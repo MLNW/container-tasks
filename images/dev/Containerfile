@@ -23,6 +23,7 @@ RUN \
     dnsutils \
     duf \
     fontconfig \
+    fuse-overlayfs \
     git \
     git-lfs \
     gitk \

@@ -114,7 +114,7 @@ RUN set -xe; \
   # Remove any sockets, e.g., created by tmux during plugin installation
   find /tmp -type s -delete; \
   curl https://mise.run | sh; \
-  .local/bin/mise use -g node@20; \
+  .local/bin/mise use -g node@22; \
   bash /tmp/scripts/configure-gitk.sh; \
   rm -rf /tmp/*;
 

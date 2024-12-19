@@ -17,7 +17,8 @@ trap 'rm -rf "$temp_dir"' EXIT
 
 pushd "$temp_dir" || exit 1
 
-url=$(curl -s https://api.github.com/repos/$repo/releases/latest \
+url=$(curl -s https://api.github.com/repos/$repo/releases \
+  | jq -r '[.[] | select(.name | startswith("sealed-secrets-"))] | first' \
   | jq -r '.assets[] | .browser_download_url' \
   | grep -e "$artifact")
 curl -L -o $archive $url

@@ -7,7 +7,6 @@ software:
   - name: mise
     check_command: /bin/zsh --login -c '[ -f ~/.zshrc ] && . ~/.zshrc; mise --version'
   - name: zoxide
-    check_command: /bin/zsh --login -c '[ -f ~/.zshrc ] && . ~/.zshrc; zoxide --version'
 
   - name: curl
   - name: dive

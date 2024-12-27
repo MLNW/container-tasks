@@ -83,17 +83,18 @@ RUN set -xe; \
   bash /tmp/scripts/install-fonts.sh; \
   bash /tmp/scripts/install-plantuml.sh; \
   bash /tmp/scripts/install-structurizr.sh; \
-  curl -fsSL https://d2lang.com/install.sh | sh -s --; \
-  sh -c "$(curl --location https://taskfile.dev/install.sh)"; \
-  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin; \
+  bash /tmp/scripts/install-d2.sh; \
+  bash /tmp/scripts/install-task.sh; \
+  bash /tmp/scripts/install-chezmoi.sh; \
   bash /tmp/scripts/install-kubectl.sh v1.30.0; \
   bash /tmp/scripts/install-clusterctl.sh 1.7.1; \
   bash /tmp/scripts/install-cilium.sh; \
   bash /tmp/scripts/install-kubeseal.sh; \
-  curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash; \
-  curl -s https://fluxcd.io/install.sh | bash; \
-  curl -sL https://talos.dev/install | sh; \
-  curl -fsSL https://bun.sh/install | bash; \
+  bash /tmp/scripts/install-helm.sh; \
+  bash /tmp/scripts/install-flux.sh; \
+  bash /tmp/scripts/install-talos.sh; \
+  bash /tmp/scripts/install-bun.sh; \
+  bash /tmp/scripts/install-zoxide.sh; \
   userdel --remove ubuntu; \
   bash /tmp/scripts/setup-user.sh dev; \
   bash /tmp/scripts/configure-podman.sh dev; \
@@ -113,13 +114,12 @@ COPY --chown=dev:dev \
   common/resources/tmp/ \
   images/dev/resources/tmp/ /tmp/
 RUN set -xe; \
-  curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash; \
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y; \
+  bash /tmp/scripts/install-rust.sh; \
   # Install dotfiles
   chezmoi init --apply MLNW; \
   # Remove any sockets, e.g., created by tmux during plugin installation
   find /tmp -type s -delete; \
-  curl https://mise.run | sh; \
+  bash /tmp/scripts/install-mise.sh; \
   .local/bin/mise use -g node@22; \
   bash /tmp/scripts/configure-gitk.sh; \
   rm -rf /tmp/*;

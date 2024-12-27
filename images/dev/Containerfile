@@ -63,7 +63,10 @@ ENV LANG=en_US.UTF-8
 
 ENV PIPX_HOME=/opt/pipx
 ENV PIPX_BIN_DIR=/usr/local/bin
-COPY images/dev/resources/tmp/ /tmp/
+COPY \
+  common/resources/tmp/ \
+  images/dev/resources/tmp/ \
+  /tmp/
 
 RUN set -xe; \
   pipx install pre-commit; \
@@ -96,7 +99,10 @@ RUN set -xe; \
   bash /tmp/scripts/configure-podman.sh dev; \
   rm -rf /tmp/*;
 
-COPY images/dev/resources/etc/ /etc/
+COPY \
+  common/resources/etc/ \
+  images/dev/resources/etc/ \
+  /etc/
 RUN set -xe; \
   sed -i 's/{{ USER }}/dev/' /etc/wsl.conf;
 
@@ -104,6 +110,7 @@ USER dev
 WORKDIR /home/dev
 
 COPY --chown=dev:dev \
+  common/resources/tmp/ \
   images/dev/resources/tmp/ /tmp/
 RUN set -xe; \
   curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash; \

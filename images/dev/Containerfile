@@ -4,14 +4,14 @@ FROM ubuntu:24.04
 RUN ln -sf /usr/bin/bash /usr/bin/sh
 
 RUN \
-  # TODO: Requires podman 4.x
-  #--mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
-  #--mount=target=/var/cache/apt,type=cache,sharing=locked \
+  # Cache dependencies outside of the container, e.g., in
+  # /var/tmp/buildah-cache-$(id -u)
+  --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+  --mount=target=/var/cache/apt,type=cache,sharing=locked \
   set -xe; \
   rm -f /etc/apt/apt.conf.d/docker-clean; \
   apt-get update; \
   apt-get upgrade --yes; \
-  apt-get clean; \
   apt-get install --yes --no-install-recommends \
     bat \
     btop \
@@ -57,8 +57,7 @@ RUN \
     ; \
   locale-gen en_US.UTF-8; \
   ln -sf /usr/bin/batcat /usr/bin/bat; \
-  ln -sf /usr/bin/python3 /usr/bin/python; \
-  apt-get clean;
+  ln -sf /usr/bin/python3 /usr/bin/python;
 
 ENV LANG=en_US.UTF-8
 

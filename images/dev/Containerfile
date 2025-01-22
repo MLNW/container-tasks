@@ -119,6 +119,7 @@ RUN set -xe; \
   chezmoi init --apply MLNW; \
   # Remove any sockets, e.g., created by tmux during plugin installation
   find /tmp -type s -delete; \
+  bash /tmp/scripts/install-bun.sh; \
   bash /tmp/scripts/install-mise.sh; \
   .local/bin/mise use -g node@22; \
   bash /tmp/scripts/configure-gitk.sh; \

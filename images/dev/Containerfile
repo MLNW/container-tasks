@@ -13,47 +13,54 @@ RUN \
   apt-get update; \
   apt-get upgrade --yes; \
   apt-get install --yes --no-install-recommends \
-    bat \
-    btop \
-    build-essential \
+    # Core system utilities
     ca-certificates \
+    locales \
+    lsb-release \
+    systemd \
+    sudo \
+    uidmap \
+    # Development tools
+    build-essential \
     clang \
-    containers-storage \
-    curl \
-    dnsutils \
-    duf \
-    fontconfig \
-    fuse-overlayfs \
+    make \
     git \
     git-lfs \
     gitk \
-    graphviz \
-    inetutils-ping \
-    iproute2 \
     jq \
-    less \
-    locales \
-    lsb-release \
-    lsof \
-    make \
     openjdk-21-jdk \
-    pipx \
-    podman \
-    postgresql-client \
     python3 \
     python3-pip \
-    slirp4netns \
-    snapd \
+    pipx \
+    # Networking and connectivity
+    dnsutils \
+    inetutils-ping \
+    iproute2 \
     ssh \
-    sudo \
-    systemd \
+    curl \
+    wget \
+    # Containers and virtualization
+    containers-storage \
+    fuse-overlayfs \
+    podman \
+    slirp4netns \
+    # Monitoring and diagnostics
+    bat \
+    btop \
+    duf \
+    lsof \
+    # Productivity and utilities
+    less \
+    fontconfig \
+    graphviz \
     tmux \
-    uidmap \
     unzip \
     vim \
-    wget \
     zip \
     zsh \
+    postgresql-client \
+    # Other package managers
+    snapd \
     ; \
   locale-gen en_US.UTF-8; \
   ln -sf /usr/bin/batcat /usr/bin/bat; \

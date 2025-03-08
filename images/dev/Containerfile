@@ -79,6 +79,7 @@ RUN set -xe; \
   pipx install pre-commit; \
   pipx install tldr; \
   pipx install poetry; \
+  pipx install uv; \
   pipx install tmuxp; \
   bash /tmp/scripts/install-mold.sh; \
   bash /tmp/scripts/install-scc.sh; \

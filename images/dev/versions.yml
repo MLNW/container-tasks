@@ -47,6 +47,7 @@ software:
   - name: pre-commit
   - name: tldr
   - name: poetry
+  - name: uv
 
   - name: psql
 

@@ -94,8 +94,8 @@ RUN set -xe; \
   bash /tmp/scripts/install-d2.sh; \
   bash /tmp/scripts/install-task.sh; \
   bash /tmp/scripts/install-chezmoi.sh; \
-  bash /tmp/scripts/install-kubectl.sh v1.32.2; \
-  bash /tmp/scripts/install-clusterctl.sh 1.9.5; \
+  bash /tmp/scripts/install-kubectl.sh v1.33.3; \
+  bash /tmp/scripts/install-clusterctl.sh 1.10.4; \
   bash /tmp/scripts/install-cilium.sh; \
   bash /tmp/scripts/install-kubeseal.sh; \
   bash /tmp/scripts/install-helm.sh; \

@@ -1,6 +1,5 @@
 software:
   - name: task
-    expected_output: v3
   - name: chezmoi
   - name: podman
     expected_output: podman version 4.

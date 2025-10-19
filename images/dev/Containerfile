@@ -110,7 +110,6 @@ RUN set -xe; \
   bash /tmp/scripts/install-talos.sh; \
   bash /tmp/scripts/install-kind.sh; \
   bash /tmp/scripts/install-ctlptl.sh; \
-  bash /tmp/scripts/install-bun.sh; \
   bash /tmp/scripts/install-zoxide.sh; \
   userdel --remove ubuntu; \
   bash /tmp/scripts/setup-user.sh dev; \

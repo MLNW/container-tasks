@@ -7,6 +7,8 @@ In the **old** instance:
 ```console
 mkdir -p /mnt/wsl/share
 sudo mount --bind / /mnt/wsl/share
+find coding/ -type d -name node_modules -prune | xargs -I _ rm -rf _
+find coding/ -type d -name target -prune | xargs -I _ rm -rf _
 ```
 
 In the **new** instance:

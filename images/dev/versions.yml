@@ -45,7 +45,6 @@ software:
   - name: pipx
   - name: pre-commit
   - name: tldr
-  - name: poetry
   - name: uv
 
   - name: psql

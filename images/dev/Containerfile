@@ -101,6 +101,7 @@ RUN set -xe; \
   bash /tmp/scripts/install-helm.sh; \
   bash /tmp/scripts/install-flux.sh; \
   bash /tmp/scripts/install-talos.sh; \
+  bash /tmp/scripts/install-ctlptl.sh; \
   bash /tmp/scripts/install-bun.sh; \
   bash /tmp/scripts/install-zoxide.sh; \
   userdel --remove ubuntu; \

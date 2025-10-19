@@ -114,7 +114,12 @@ RUN set -xe; \
   userdel --remove ubuntu; \
   bash /tmp/scripts/setup-user.sh dev; \
   bash /tmp/scripts/configure-podman.sh dev; \
-  rm -rf /tmp/*;
+  rm -rf \
+    /opt/pipx/logs/* \
+    /tmp/* \
+    $HOME/.cache/* \
+    $HOME/.local/share/man/* \
+    ;
 
 COPY \
   common/resources/etc/ \

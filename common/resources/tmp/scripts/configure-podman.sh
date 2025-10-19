@@ -20,7 +20,7 @@ cp \
   /usr/share/containers/storage.conf \
   /etc/containers/
 
-# See: https://wiki.archlinux.org/title/Podman#Configuration
+# See: https://github.com/containers/podman/blob/main/docs/tutorials/rootless_tutorial.md#etcsubuid-and-etcsubgid-configuration
 usermod --add-subuids 100000-165535 --add-subgids 100000-165535 $user_name
 
 # See: https://www.redhat.com/sysadmin/podman-inside-container
@@ -48,3 +48,20 @@ cat <<EOF >> /etc/containers/registries.conf
 location = "localhost"
 insecure = true
 EOF
+
+mkdir -p /etc/containers/containers.conf.d
+
+# Ensure Podman socket is always running
+cat > /etc/containers/containers.conf.d/timeout.conf <<'EOF'
+[engine]
+service_timeout=0
+EOF
+# Use Netavark as the network backend
+cat > /etc/containers/containers.conf.d/network.conf <<'EOF'
+[network]
+network_backend="netavark"
+EOF
+
+systemctl enable --now podman.socket
+ln -sf /run/podman/podman.sock /var/run/docker.sock
+ln -sf /usr/bin/podman /usr/bin/docker

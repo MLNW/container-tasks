@@ -40,8 +40,11 @@ RUN \
     curl \
     wget \
     # Containers and virtualization
+    buildah \
+    catatonit \
     containers-storage \
     fuse-overlayfs \
+    netavark \
     podman \
     slirp4netns \
     # Monitoring and diagnostics

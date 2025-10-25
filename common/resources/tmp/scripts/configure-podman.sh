@@ -11,6 +11,8 @@ if [[ $# -ne 1 ]]; then
 fi
 user_name=$1
 
+set -xe
+
 config='unqualified-search-registries = ["docker.io"]'
 sed -i /etc/containers/registries.conf \
   -e "/# unqualified-search-registries/a $config"
@@ -62,6 +64,16 @@ cat > /etc/containers/containers.conf.d/network.conf <<'EOF'
 network_backend="netavark"
 EOF
 
-systemctl enable --now podman.socket
-ln -sf /run/podman/podman.sock /var/run/docker.sock
+# Rootful Podman socket
+#systemctl enable --now podman.socket
+#ln -sf /run/podman/podman.sock /var/run/docker.sock
 ln -sf /usr/bin/podman /usr/bin/docker
+
+# Rootless Podman socket
+cat <<EOF > /etc/profile.d/podman-socket.sh
+if [ "\$(id -un)" = "$user_name" ]; then
+  systemctl --user enable --now podman.socket 2>/dev/null || true
+  sudo ln -sf "/run/user/\$(id -u)/podman/podman.sock" /var/run/docker.sock 2>/dev/null || true
+  sudo loginctl enable-linger $user_name
+fi
+EOF

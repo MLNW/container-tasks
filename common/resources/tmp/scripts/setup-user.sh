@@ -17,3 +17,7 @@ usermod --password $user_name $user_name
 usermod -aG sudo $user_name
 chpasswd <<< $user_name:$user_name
 chsh -s /bin/zsh $user_name
+
+# Add passwordless sudo for the user
+echo "$user_name ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$user_name
+chmod 0440 /etc/sudoers.d/$user_name

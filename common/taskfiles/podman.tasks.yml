@@ -208,6 +208,9 @@ tasks:
         pushd {{.BUILD_PATH}} || exit 1
         zip -r {{.ZIP_ARCHIVE}} {{.IMAGE_NAME}}-{{.IMAGE_TAG}}
         popd || exit 1
+
+      # Clean up
+      - rm -rf {{.TMP_PATH}}
     status:
       - test -f {{.ROOTFS_TAR}}
       # Task is up-to-date if container image is older than build artifact

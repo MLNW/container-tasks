@@ -109,6 +109,7 @@ RUN set -xe; \
   bash /tmp/scripts/install-flux.sh; \
   bash /tmp/scripts/install-talos.sh; \
   bash /tmp/scripts/install-kind.sh; \
+  bash /tmp/scripts/install-kind-cloud-provider.sh; \
   bash /tmp/scripts/install-ctlptl.sh; \
   bash /tmp/scripts/install-zoxide.sh; \
   userdel --remove ubuntu; \

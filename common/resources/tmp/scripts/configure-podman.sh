@@ -65,15 +65,8 @@ network_backend="netavark"
 EOF
 
 # Rootful Podman socket
-#systemctl enable --now podman.socket
-#ln -sf /run/podman/podman.sock /var/run/docker.sock
 ln -sf /usr/bin/podman /usr/bin/docker
-
-# Rootless Podman socket
 cat <<EOF > /etc/profile.d/podman-socket.sh
-if [ "\$(id -un)" = "$user_name" ]; then
-  systemctl --user enable --now podman.socket 2>/dev/null || true
-  sudo ln -sf "/run/user/\$(id -u)/podman/podman.sock" /var/run/docker.sock 2>/dev/null || true
-  sudo loginctl enable-linger $user_name
-fi
+sudo systemctl enable --now podman.socket 2>/dev/null || true
+sudo ln -sf "/run/podman/podman.sock" /var/run/docker.sock 2>/dev/null || true
 EOF

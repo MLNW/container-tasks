@@ -141,6 +141,8 @@ RUN set -xe; \
   chezmoi init --apply MLNW; \
   # Remove any sockets, e.g., created by tmux during plugin installation
   find /tmp -type s -delete; \
+  sudo bash /tmp/scripts/install-kubectl-plugin-krew.sh; \
+  kubectl krew install klock; \
   bash /tmp/scripts/install-bun.sh; \
   bash /tmp/scripts/install-mise.sh; \
   .local/bin/mise use -g node@22; \

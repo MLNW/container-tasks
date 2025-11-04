@@ -67,6 +67,7 @@ EOF
 # Rootful Podman socket
 ln -sf /usr/bin/podman /usr/bin/docker
 cat <<EOF > /etc/profile.d/podman-socket.sh
-sudo systemctl enable --now podman.socket 2>/dev/null || true
-sudo ln -sf "/run/podman/podman.sock" /var/run/docker.sock 2>/dev/null || true
+systemctl enable --now podman.socket 2>/dev/null || true
+sudo ln -sf "/run/user/\$(id -u)/podman/podman.sock" /var/run/docker.sock 2>/dev/null || true
+sudo loginctl enable-linger $user_name
 EOF

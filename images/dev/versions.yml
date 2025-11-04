@@ -59,6 +59,10 @@ software:
 
   - name: kubectl
     check_command: kubectl version --client
+  - name: krew
+    check_command: kubectl krew version
+  - name: klock
+    check_command: PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH" kubectl klock --version
   - name: clusterctl
     check_command: clusterctl version
   - name: helm

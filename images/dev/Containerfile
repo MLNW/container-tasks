@@ -58,15 +58,16 @@ RUN \
     duf \
     lsof \
     # Productivity and utilities
-    less \
     fontconfig \
     graphviz \
+    less \
+    postgresql-client \
+    ripgrep \
     tmux \
     unzip \
     vim \
     zip \
     zsh \
-    postgresql-client \
     # Other package managers
     snapd \
     ; \

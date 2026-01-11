@@ -99,6 +99,8 @@ RUN --mount=type=secret,id=github_token \
   bash /tmp/scripts/install-plantuml.sh; \
   bash /tmp/scripts/install-structurizr.sh; \
   bash /tmp/scripts/install-d2.sh; \
+  ubi --project moonrepo/proto $UBI_OPTS; \
+  ubi --project moonrepo/moon $UBI_OPTS; \
   ubi --project rui314/mold $UBI_OPTS; \
   ubi --project boyter/scc $UBI_OPTS; \
   ubi --project mikefarah/yq $UBI_OPTS; \

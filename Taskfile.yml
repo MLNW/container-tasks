@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 includes:
   image:dev:
@@ -7,3 +7,6 @@ includes:
       IMAGE_NAME: '{{.IMAGE_NAME | default "dev"}}'
       CONTAINERFILE: ./images/dev/Containerfile
       EXPECTED_CONFIG: ./images/dev/versions.yml
+      # Classic token with `read:packages` scope for avoiding rate limiting on
+      # GitHub Packages installations via ubi.
+      PODMAN_OPTS: "--secret id=github_token,src=images/dev/resources/secrets/github_token,type=file"

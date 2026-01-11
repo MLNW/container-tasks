@@ -75,5 +75,3 @@ software:
   - name: kubeseal
   - name: ctlptl
     check_command: ctlptl version
-  - name: kind
-    check_command: kind version

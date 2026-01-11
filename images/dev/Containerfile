@@ -71,6 +71,10 @@ RUN \
     # Other package managers
     snapd \
     ; \
+  # Install universal binary installer (ubi)
+  curl --silent --location \
+    https://raw.githubusercontent.com/houseabsolute/ubi/master/bootstrap/bootstrap-ubi.sh | \
+    TAG=v0.8.4 sh; \
   locale-gen en_US.UTF-8; \
   ln -sf /usr/bin/batcat /usr/bin/bat; \
   ln -sf /usr/bin/python3 /usr/bin/python;
@@ -81,37 +85,38 @@ ENV PIPX_HOME=/opt/pipx
 ENV PIPX_BIN_DIR=/usr/local/bin
 COPY \
   common/resources/tmp/ \
-  images/dev/resources/tmp/ \
   /tmp/
 
-RUN set -xe; \
+RUN --mount=type=secret,id=github_token \
+  set -xe; \
+  GITHUB_TOKEN=$(cat /run/secrets/github_token); \
+  UBI_OPTS="--in /usr/local/bin --verbose"; \
   pipx install pre-commit; \
   pipx install tldr; \
   pipx install uv; \
   pipx install tmuxp; \
-  bash /tmp/scripts/install-mold.sh; \
-  bash /tmp/scripts/install-scc.sh; \
-  bash /tmp/scripts/install-yq.sh; \
-  bash /tmp/scripts/install-tilt.sh; \
-  bash /tmp/scripts/install-dive.sh; \
-  bash /tmp/scripts/install-dust.sh; \
-  bash /tmp/scripts/install-vale.sh; \
   bash /tmp/scripts/install-fonts.sh; \
   bash /tmp/scripts/install-plantuml.sh; \
   bash /tmp/scripts/install-structurizr.sh; \
   bash /tmp/scripts/install-d2.sh; \
-  bash /tmp/scripts/install-task.sh; \
-  bash /tmp/scripts/install-chezmoi.sh; \
+  ubi --project rui314/mold $UBI_OPTS; \
+  ubi --project boyter/scc $UBI_OPTS; \
+  ubi --project mikefarah/yq $UBI_OPTS; \
+  ubi --project wagoodman/dive $UBI_OPTS; \
+  ubi --project bootandy/dust $UBI_OPTS; \
+  ubi --project errata-ai/vale $UBI_OPTS; \
+  ubi --project tilt-dev/tilt $UBI_OPTS; \
+  ubi --project tilt-dev/ctlptl $UBI_OPTS; \
+  ubi --project go-task/task $UBI_OPTS; \
+  ubi --project twpayne/chezmoi $UBI_OPTS; \
   bash /tmp/scripts/install-kubectl.sh v1.33.3; \
-  bash /tmp/scripts/install-clusterctl.sh 1.10.4; \
-  bash /tmp/scripts/install-cilium.sh; \
-  bash /tmp/scripts/install-kubeseal.sh; \
+  ubi --project kubernetes-sigs/cluster-api --exe clusterctl $UBI_OPTS; \
+  ubi --project cilium/cilium-cli --exe cilium $UBI_OPTS; \
+  ubi --project bitnami-labs/sealed-secrets --exe kubeseal $UBI_OPTS; \
   bash /tmp/scripts/install-helm.sh; \
-  bash /tmp/scripts/install-flux.sh; \
-  bash /tmp/scripts/install-talos.sh; \
-  bash /tmp/scripts/install-kind.sh; \
-  bash /tmp/scripts/install-kind-cloud-provider.sh; \
-  bash /tmp/scripts/install-ctlptl.sh; \
+  ubi --project fluxcd/flux2 --exe flux $UBI_OPTS; \
+  ubi --project siderolabs/talos --exe talosctl $UBI_OPTS; \
+  ubi --project oven-sh/bun $UBI_OPTS; \
   bash /tmp/scripts/install-zoxide.sh; \
   userdel --remove ubuntu; \
   bash /tmp/scripts/setup-user.sh dev; \
@@ -135,7 +140,7 @@ WORKDIR /home/dev
 
 COPY --chown=dev:dev \
   common/resources/tmp/ \
-  images/dev/resources/tmp/ /tmp/
+  /tmp/
 RUN set -xe; \
   bash /tmp/scripts/install-rust.sh; \
   # Install dotfiles
@@ -144,7 +149,6 @@ RUN set -xe; \
   find /tmp -type s -delete; \
   sudo bash /tmp/scripts/install-kubectl-plugin-krew.sh; \
   kubectl krew install klock; \
-  bash /tmp/scripts/install-bun.sh; \
   bash /tmp/scripts/install-mise.sh; \
   .local/bin/mise use -g node@22; \
   bash /tmp/scripts/configure-gitk.sh; \

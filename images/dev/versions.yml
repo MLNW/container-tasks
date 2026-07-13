@@ -2,7 +2,7 @@ software:
   - name: task
   - name: chezmoi
   - name: podman
-    expected_output: podman version 4.
+    expected_output: podman version 5.
   - name: mise
     check_command: /bin/zsh --login -c '[ -f ~/.zshrc ] && . ~/.zshrc; mise --version'
   - name: zoxide

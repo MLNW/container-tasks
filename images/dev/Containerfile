@@ -1,7 +1,10 @@
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 
 # Replace dash with bash
 RUN ln -sf /usr/bin/bash /usr/bin/sh
+
+# Prevent systemd-dependent packages from trying to start services during build
+# RUN printf '#!/bin/sh\nexit 101\n' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d
 
 RUN \
   # Cache dependencies outside of the container, e.g., in
@@ -17,8 +20,9 @@ RUN \
     ca-certificates \
     locales \
     lsb-release \
-    systemd \
     sudo \
+    systemd \
+    tzdata \
     uidmap \
     # Development tools
     build-essential \
@@ -74,12 +78,11 @@ RUN \
   # Install universal binary installer (ubi)
   curl --silent --location \
     https://raw.githubusercontent.com/houseabsolute/ubi/master/bootstrap/bootstrap-ubi.sh | \
-    TAG=v0.8.4 sh; \
-  locale-gen en_US.UTF-8; \
+    TAG=v0.9.0 sh; \
+  locale-gen en_GB.UTF-8; \
+  update-locale LANG=en_GB.UTF-8; \
   ln -sf /usr/bin/batcat /usr/bin/bat; \
   ln -sf /usr/bin/python3 /usr/bin/python;
-
-ENV LANG=en_US.UTF-8
 
 ENV PIPX_HOME=/opt/pipx
 ENV PIPX_BIN_DIR=/usr/local/bin
@@ -88,8 +91,8 @@ COPY \
   /tmp/
 
 RUN --mount=type=secret,id=github_token \
+  export GITHUB_TOKEN=$(cat /run/secrets/github_token); \
   set -xe; \
-  GITHUB_TOKEN=$(cat /run/secrets/github_token); \
   UBI_OPTS="--in /usr/local/bin --verbose"; \
   pipx install pre-commit; \
   pipx install tldr; \
@@ -99,6 +102,8 @@ RUN --mount=type=secret,id=github_token \
   bash /tmp/scripts/install-plantuml.sh; \
   bash /tmp/scripts/install-structurizr.sh; \
   bash /tmp/scripts/install-d2.sh; \
+  ubi --project moonrepo/proto $UBI_OPTS; \
+  ubi --project moonrepo/moon $UBI_OPTS; \
   ubi --project rui314/mold $UBI_OPTS; \
   ubi --project boyter/scc $UBI_OPTS; \
   ubi --project mikefarah/yq $UBI_OPTS; \
@@ -109,7 +114,9 @@ RUN --mount=type=secret,id=github_token \
   ubi --project tilt-dev/ctlptl $UBI_OPTS; \
   ubi --project go-task/task $UBI_OPTS; \
   ubi --project twpayne/chezmoi $UBI_OPTS; \
+  ubi --project cli/cli --exe gh $UBI_OPTS; \
   bash /tmp/scripts/install-kubectl.sh v1.33.3; \
+  ubi --project kubernetes-sigs/krew --rename-exe kubectl-krew $UBI_OPTS; \
   ubi --project kubernetes-sigs/cluster-api --exe clusterctl $UBI_OPTS; \
   ubi --project cilium/cilium-cli --exe cilium $UBI_OPTS; \
   ubi --project bitnami-labs/sealed-secrets --exe kubeseal $UBI_OPTS; \
@@ -117,10 +124,11 @@ RUN --mount=type=secret,id=github_token \
   ubi --project fluxcd/flux2 --exe flux $UBI_OPTS; \
   ubi --project siderolabs/talos --exe talosctl $UBI_OPTS; \
   ubi --project oven-sh/bun $UBI_OPTS; \
-  bash /tmp/scripts/install-zoxide.sh; \
+  ubi --project ajeetdsouza/zoxide $UBI_OPTS; \
   userdel --remove ubuntu; \
   bash /tmp/scripts/setup-user.sh dev; \
   bash /tmp/scripts/configure-podman.sh dev; \
+  unset GITHUB_TOKEN; \
   rm -rf \
     /opt/pipx/logs/* \
     /tmp/* \
@@ -132,7 +140,8 @@ COPY \
   common/resources/etc/ \
   images/dev/resources/etc/ \
   /etc/
-RUN set -xe; \
+RUN \
+  set -xe; \
   sed -i 's/{{ USER }}/dev/' /etc/wsl.conf;
 
 USER dev
@@ -141,13 +150,15 @@ WORKDIR /home/dev
 COPY --chown=dev:dev \
   common/resources/tmp/ \
   /tmp/
-RUN set -xe; \
+RUN \
+  set -xe; \
   bash /tmp/scripts/install-rust.sh; \
   # Install dotfiles
   chezmoi init --apply MLNW; \
   # Remove any sockets, e.g., created by tmux during plugin installation
   find /tmp -type s -delete; \
-  sudo bash /tmp/scripts/install-kubectl-plugin-krew.sh; \
+  # Configure krew on the user's shell
+  echo 'export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"' > $HOME/.oh-my-zsh/custom/krew.zsh; \
   kubectl krew install klock; \
   bash /tmp/scripts/install-mise.sh; \
   .local/bin/mise use -g node@22; \

@@ -74,7 +74,7 @@ RUN \
   # Install universal binary installer (ubi)
   curl --silent --location \
     https://raw.githubusercontent.com/houseabsolute/ubi/master/bootstrap/bootstrap-ubi.sh | \
-    TAG=v0.8.4 sh; \
+    TAG=v0.9.0 sh; \
   locale-gen en_US.UTF-8; \
   ln -sf /usr/bin/batcat /usr/bin/bat; \
   ln -sf /usr/bin/python3 /usr/bin/python;

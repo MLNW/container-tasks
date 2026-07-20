@@ -116,6 +116,7 @@ RUN --mount=type=secret,id=github_token \
   ubi --project go-task/task $UBI_OPTS; \
   ubi --project twpayne/chezmoi $UBI_OPTS; \
   ubi --project cli/cli --exe gh $UBI_OPTS; \
+  ubi --project immanuwell/dockerfile-roast --exe droast $UBI_OPTS; \
   bash /tmp/scripts/install-kubectl.sh v1.33.3; \
   ubi --project kubernetes-sigs/krew --rename-exe kubectl-krew $UBI_OPTS; \
   ubi --project kubernetes-sigs/cluster-api --exe clusterctl $UBI_OPTS; \

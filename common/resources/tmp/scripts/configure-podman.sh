@@ -66,8 +66,24 @@ EOF
 
 # Rootful Podman socket
 ln -sf /usr/bin/podman /usr/bin/docker
-cat <<EOF > /etc/profile.d/podman-socket.sh
-systemctl enable --now podman.socket 2>/dev/null || true
-sudo ln -sf "/run/user/\$(id -u)/podman/podman.sock" /var/run/docker.sock 2>/dev/null || true
-sudo loginctl enable-linger $user_name
+
+# Enable linger via file so it works without a running systemd (e.g., during
+# container build / version testing). loginctl enable-linger would require
+# booted systemd and breaks WSL startup if called on every login.
+mkdir -p /var/lib/systemd/linger
+touch /var/lib/systemd/linger/$user_name
+
+# Pre-enable podman user socket via symlink (equivalent to `systemctl --user
+# enable podman.socket` but works without a running systemd at build time).
+user_home=$(getent passwd $user_name | cut -d: -f6)
+mkdir -p $user_home/.config/systemd/user/default.target.wants
+ln -sf /usr/lib/systemd/user/podman.socket \
+  $user_home/.config/systemd/user/default.target.wants/podman.socket
+chown -R $user_name:$user_name $user_home/.config
+
+# Only wire up the Docker socket shim when systemd is actually running.
+cat <<'EOF' > /etc/profile.d/podman-socket.sh
+if [ -d /run/systemd/private ]; then
+  sudo ln -sf "/run/user/$(id -u)/podman/podman.sock" /var/run/docker.sock 2>/dev/null || true
+fi
 EOF

@@ -3,6 +3,10 @@ FROM ubuntu:26.04
 # Replace dash with bash
 RUN ln -sf /usr/bin/bash /usr/bin/sh
 
+COPY \
+  images/dev/resources/systemd-256-wsl-fix.conf \
+  /etc/systemd/system/user@.service.d/99-no-delegate.conf
+
 RUN \
   # Cache dependencies outside of the container, e.g., in
   # /var/tmp/buildah-cache-$(id -u)

@@ -164,6 +164,8 @@ RUN \
   bash /tmp/scripts/install-mise.sh; \
   .local/bin/mise use -g node@22; \
   bash /tmp/scripts/configure-gitk.sh; \
+  bash /tmp/scripts/install-claude.sh; \
+  bash /tmp/scripts/configure-claude.sh; \
   rm -rf /tmp/*;
 
 CMD [ "zsh" ]

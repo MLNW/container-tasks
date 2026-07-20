@@ -10,6 +10,9 @@ software:
   - name: moon
   - name: gh
 
+  - name: claude
+    check_command: /bin/zsh --login -c '[ -f ~/.zshrc ] && . ~/.zshrc; claude --version && claude plugins list'
+
   - name: curl
   - name: dive
   - name: duf

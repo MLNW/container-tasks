@@ -127,6 +127,7 @@ RUN --mount=type=secret,id=github_token \
   ubi --project fluxcd/flux2 --exe flux $UBI_OPTS; \
   ubi --project siderolabs/talos --exe talosctl $UBI_OPTS; \
   ubi --project oven-sh/bun $UBI_OPTS; \
+  ln -sf /usr/local/bin/bun /usr/local/bin/bunx; \
   ubi --project ajeetdsouza/zoxide $UBI_OPTS; \
   userdel --remove ubuntu; \
   bash /tmp/scripts/setup-user.sh dev; \

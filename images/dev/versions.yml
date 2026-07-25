@@ -35,6 +35,11 @@ software:
 
   - name: java
 
+  - name: node
+    check_command: /bin/zsh --login -c '[ -f ~/.zshrc ] && . ~/.zshrc; node --version'
+  - name: bun
+  - name: bunx
+
   - name: rustc
     check_command: /bin/zsh --login -c '[ -f ~/.zshrc ] && . ~/.zshrc; rustc --version'
   - name: cargo

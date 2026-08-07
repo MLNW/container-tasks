@@ -6,7 +6,6 @@ software:
   - name: droast
   - name: zoxide
   - name: mise
-    check_command: /bin/zsh --login -c '[ -f ~/.zshrc ] && . ~/.zshrc; mise --version'
   - name: proto
   - name: moon
   - name: gh

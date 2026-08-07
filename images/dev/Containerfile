@@ -165,6 +165,9 @@ RUN \
   bash /tmp/scripts/configure-gitk.sh; \
   bash /tmp/scripts/install-claude.sh; \
   bash /tmp/scripts/configure-claude.sh; \
-  rm -rf /tmp/*;
+  rm -rf \
+    /tmp/* \
+    $HOME/.cache/* \
+    ;
 
 CMD [ "zsh" ]

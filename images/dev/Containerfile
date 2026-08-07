@@ -98,7 +98,7 @@ RUN --mount=type=secret,id=github_token \
   uv tool install tldr; \
   uv tool install tmuxp; \
   bash /tmp/scripts/install-fonts.sh; \
-  bash /tmp/scripts/install-d2.sh; \
+  ubi --project d2lang/d2 $UBI_OPTS; \
   ubi --project moonrepo/proto $UBI_OPTS; \
   ubi --project moonrepo/moon $UBI_OPTS; \
   ubi --project rui314/mold $UBI_OPTS; \

@@ -34,8 +34,6 @@ RUN \
     gitk \
     jq \
     python3 \
-    python3-pip \
-    pipx \
     # Networking and connectivity
     dnsutils \
     inetutils-ping \
@@ -84,8 +82,8 @@ RUN \
   ln -sf /usr/bin/batcat /usr/bin/bat; \
   ln -sf /usr/bin/python3 /usr/bin/python;
 
-ENV PIPX_HOME=/opt/pipx
-ENV PIPX_BIN_DIR=/usr/local/bin
+ENV UV_TOOL_DIR=/opt/uv/tools
+ENV UV_TOOL_BIN_DIR=/usr/local/bin
 COPY \
   common/resources/tmp/ \
   /tmp/
@@ -94,10 +92,11 @@ RUN --mount=type=secret,id=github_token \
   export GITHUB_TOKEN=$(cat /run/secrets/github_token); \
   set -xe; \
   UBI_OPTS="--in /usr/local/bin --verbose"; \
-  pipx install pre-commit; \
-  pipx install tldr; \
-  pipx install uv; \
-  pipx install tmuxp; \
+  ubi --project astral-sh/uv --exe uv $UBI_OPTS; \
+  ubi --project astral-sh/uv --exe uvx $UBI_OPTS; \
+  uv tool install pre-commit; \
+  uv tool install tldr; \
+  uv tool install tmuxp; \
   bash /tmp/scripts/install-fonts.sh; \
   bash /tmp/scripts/install-d2.sh; \
   ubi --project moonrepo/proto $UBI_OPTS; \
@@ -130,7 +129,6 @@ RUN --mount=type=secret,id=github_token \
   bash /tmp/scripts/configure-podman.sh dev; \
   unset GITHUB_TOKEN; \
   rm -rf \
-    /opt/pipx/logs/* \
     /tmp/* \
     $HOME/.cache/* \
     $HOME/.local/share/man/* \

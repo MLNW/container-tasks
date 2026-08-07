@@ -50,12 +50,10 @@ software:
 
   - name: python
   - name: python3
-  - name: pip
-  - name: pip3
-  - name: pipx
   - name: pre-commit
   - name: tldr
   - name: uv
+  - name: uvx
 
   - name: psql
 

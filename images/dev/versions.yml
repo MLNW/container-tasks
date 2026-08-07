@@ -33,8 +33,6 @@ software:
     expected_output: yq (https://github.com/mikefarah/yq/) version v4
   - name: zsh
 
-  - name: java
-
   - name: node
     check_command: /bin/zsh --login -c '[ -f ~/.zshrc ] && . ~/.zshrc; node --version'
   - name: bun
@@ -62,12 +60,6 @@ software:
   - name: psql
 
   - name: d2
-  - name: dot
-    check_command: dot -version
-  - name: plantuml
-    check_command: plantuml -version
-  - name: structurizr
-    check_command: structurizr version
 
   - name: kubectl
     check_command: kubectl version --client

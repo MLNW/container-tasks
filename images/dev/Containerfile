@@ -33,7 +33,6 @@ RUN \
     git-lfs \
     gitk \
     jq \
-    openjdk-21-jdk \
     python3 \
     python3-pip \
     pipx \
@@ -65,7 +64,6 @@ RUN \
     lsof \
     # Productivity and utilities
     fontconfig \
-    graphviz \
     less \
     postgresql-client \
     ripgrep \
@@ -101,8 +99,6 @@ RUN --mount=type=secret,id=github_token \
   pipx install uv; \
   pipx install tmuxp; \
   bash /tmp/scripts/install-fonts.sh; \
-  bash /tmp/scripts/install-plantuml.sh; \
-  bash /tmp/scripts/install-structurizr.sh; \
   bash /tmp/scripts/install-d2.sh; \
   ubi --project moonrepo/proto $UBI_OPTS; \
   ubi --project moonrepo/moon $UBI_OPTS; \

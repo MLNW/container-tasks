@@ -67,7 +67,7 @@ software:
   - name: clusterctl
     check_command: clusterctl version
   - name: helm
-    check_command: helm version --client
+    check_command: helm version
   - name: flux
   - name: talosctl
     check_command: talosctl version --client

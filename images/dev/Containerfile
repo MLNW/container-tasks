@@ -115,11 +115,11 @@ RUN --mount=type=secret,id=github_token \
   ubi --project jdx/mise --exe mise $UBI_OPTS; \
   ubi --project immanuwell/dockerfile-roast --exe droast $UBI_OPTS; \
   bash /tmp/scripts/install-kubectl.sh v1.33.3; \
+  bash /tmp/scripts/install-helm.sh v4.2.3; \
   ubi --project kubernetes-sigs/krew --rename-exe kubectl-krew $UBI_OPTS; \
   ubi --project kubernetes-sigs/cluster-api --exe clusterctl $UBI_OPTS; \
   ubi --project cilium/cilium-cli --exe cilium $UBI_OPTS; \
   ubi --project bitnami-labs/sealed-secrets --exe kubeseal $UBI_OPTS; \
-  bash /tmp/scripts/install-helm.sh; \
   ubi --project fluxcd/flux2 --exe flux $UBI_OPTS; \
   ubi --project siderolabs/talos --exe talosctl $UBI_OPTS; \
   ubi --project oven-sh/bun $UBI_OPTS; \
